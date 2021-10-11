@@ -5,6 +5,11 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
+#include "IGraphicalUserInterface.h"
+
+#include "GUI_Setting.h"
+#include "GUI_Lighting.h"
+
 namespace Bamtang
 {
     class GUI_Application
@@ -16,11 +21,15 @@ namespace Bamtang
         ImVec2 display;
         ImVec2 mouse;
 
+        std::vector<IGraphicalUserInterface*> gui;
+
     public:
 
         GUI_Application(GLFWwindow* window, std::string version)
         {
             Start(window, version);
+            AddGraphicalUserInterface(new GUI_Setting());
+            AddGraphicalUserInterface(new GUI_Lighting());
         }
 
         void Update()
@@ -37,6 +46,8 @@ namespace Bamtang
             DockSpace();
 
             Display(framebuffer);
+
+            DisplayGraphicalUserInterface();
 
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -102,6 +113,19 @@ namespace Bamtang
             mouse = ImVec2(mousePosition.x - sceenPosition.x - scroll.x, mousePosition.y - sceenPosition.y - scroll.y);
 
             ImGui::End();
+        }
+
+        void AddGraphicalUserInterface(IGraphicalUserInterface *gui)
+        {
+            this->gui.push_back(gui);
+        }
+
+        void DisplayGraphicalUserInterface()
+        {
+            for (IGraphicalUserInterface *&inteface : gui)
+            {
+                inteface->Display();
+            }
         }
 
         void DockSpace()

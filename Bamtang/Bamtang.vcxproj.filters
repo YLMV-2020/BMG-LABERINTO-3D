@@ -36,7 +36,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source.cpp">
+    <ClCompile Include="main.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="imgui.cpp">
@@ -103,6 +103,21 @@
     </ClInclude>
     <ClInclude Include="Event_Application.h">
       <Filter>Archivos de encabezado\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Maze.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Archivos de encabezado\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI_Setting.h">
+      <Filter>Archivos de encabezado\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="IGraphicalUserInterface.h">
+      <Filter>Archivos de encabezado\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI_Lighting.h">
+      <Filter>Archivos de encabezado\GUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

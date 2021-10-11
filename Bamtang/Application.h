@@ -1,15 +1,24 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include <iostream>
 #include <functional>
+#include <queue>
 
-#include "Event_Application.h"
-
-#include "Input.h"
+#include "Maze.h"
 
 #include "Framebuffer.h"
+
+#include "Camera.h"
+#include "Input.h"
+
 #include "GUI_Application.h"
+
+#include "Event_Application.h"
 
 namespace Bamtang
 {
@@ -30,6 +39,7 @@ namespace Bamtang
 		Framebuffer* framebuffer;
 
         // ENGINE
+        Camera* camera;
         Input *input;
 
         // EVENTS
@@ -44,15 +54,21 @@ namespace Bamtang
 
             Start(name, version);
 
-            // --------- EVENTS ----------- //
-            this->event_app = Event_Application::Instance(window);
             // --------- UTIL ----------- //
             this->framebuffer = new Framebuffer(WIDTH, HEIGHT);
             // --------- ENGINE ----------- //
-            this->input = Input::Instance(window);
+            this->camera = Camera::Instance(WIDTH, HEIGHT);
+            this->input = Input::Instance(window, camera);
+            // --------- EVENTS ----------- //
+            this->event_app = Event_Application::Instance(window, camera);
             // --------- GUI ----------- //
             this->gui_app = new GUI_Application(window, version);
             
+        }
+
+        ~Application()
+        {
+            Clear();
         }
 
         void Start(std::string name, std::string version)
@@ -81,7 +97,7 @@ namespace Bamtang
         {
         }
 
-        void Render()
+        void Render3D()
         {
             while (!glfwWindowShouldClose(window))
             {
