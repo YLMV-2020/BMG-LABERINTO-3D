@@ -2,7 +2,7 @@
 
 namespace Bamtang
 {
-    class Object : IObject
+    class Object : public IObject
     {
     private:
 

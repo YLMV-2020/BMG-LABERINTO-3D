@@ -34,6 +34,24 @@
     <Filter Include="Archivos de encabezado\Events">
       <UniqueIdentifier>{5ec75ed6-2e0d-4ae8-a16b-7a78557b7bf1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Archivos de encabezado\Engine\GameObject">
+      <UniqueIdentifier>{1f3586bb-efdc-4d21-b841-01eba7f5a3da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Engine\GameObject\Mesh">
+      <UniqueIdentifier>{055fa5bb-cf86-44f3-b47e-172b2ef34003}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Engine\GameObject\SharedTypes">
+      <UniqueIdentifier>{1c76a9c8-fa63-4c73-8e76-0aee8ee960b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Enumerations">
+      <UniqueIdentifier>{d0861221-e679-4955-a760-aa4e77274c44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Engine\Shaders">
+      <UniqueIdentifier>{0abdbfe3-7e81-49ab-bddb-9630263b932d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Managers">
+      <UniqueIdentifier>{6b4fc22d-e0ec-4a84-b94f-22919dd368f8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -86,17 +104,11 @@
     <ClInclude Include="IObject.h">
       <Filter>Archivos de encabezado\Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="Object.h">
-      <Filter>Archivos de encabezado\Engine</Filter>
-    </ClInclude>
     <ClInclude Include="Application.h">
       <Filter>Archivos de encabezado\Engine\Window</Filter>
     </ClInclude>
     <ClInclude Include="GUI_Application.h">
       <Filter>Archivos de encabezado\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="Input.h">
-      <Filter>Archivos de encabezado\Engine\Window</Filter>
     </ClInclude>
     <ClInclude Include="Framebuffer.h">
       <Filter>Archivos de encabezado\Utility</Filter>
@@ -119,5 +131,121 @@
     <ClInclude Include="GUI_Lighting.h">
       <Filter>Archivos de encabezado\GUI</Filter>
     </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>Archivos de encabezado\Engine\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="IMesh.h">
+      <Filter>Archivos de encabezado\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="BoneMatrix.h">
+      <Filter>Archivos de encabezado\Engine\GameObject\SharedTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>Archivos de encabezado\Engine\GameObject\SharedTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexBoneData.h">
+      <Filter>Archivos de encabezado\Engine\GameObject\SharedTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh_Static.h">
+      <Filter>Archivos de encabezado\Engine\GameObject\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Archivos de encabezado\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Archivos de encabezado\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="IBaseMessage.h">
+      <Filter>Archivos de encabezado\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="E_MessageType.h">
+      <Filter>Archivos de encabezado\Enumerations</Filter>
+    </ClInclude>
+    <ClInclude Include="IBaseComponent.h">
+      <Filter>Archivos de encabezado\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshComponent.h">
+      <Filter>Archivos de encabezado\Engine\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="CubeMapTexture.h">
+      <Filter>Archivos de encabezado\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>Archivos de encabezado\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeManager.h">
+      <Filter>Archivos de encabezado\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>Archivos de encabezado\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Skybox.h">
+      <Filter>Archivos de encabezado\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Ground.h">
+      <Filter>Archivos de encabezado\Engine</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shaders\skybox.vert">
+      <Filter>Archivos de encabezado\Engine\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\skybox.frag">
+      <Filter>Archivos de encabezado\Engine\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\model.vert">
+      <Filter>Archivos de encabezado\Engine\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\sol.frag">
+      <Filter>Archivos de encabezado\Engine\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\sol.vert">
+      <Filter>Archivos de encabezado\Engine\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\terrain.frag">
+      <Filter>Archivos de encabezado\Engine\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\terrain.vert">
+      <Filter>Archivos de encabezado\Engine\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\animation.frag">
+      <Filter>Archivos de encabezado\Engine\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\animation.vert">
+      <Filter>Archivos de encabezado\Engine\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\avatar.frag">
+      <Filter>Archivos de encabezado\Engine\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\avatar.vert">
+      <Filter>Archivos de encabezado\Engine\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\cubemaps.frag">
+      <Filter>Archivos de encabezado\Engine\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\cubemaps.vert">
+      <Filter>Archivos de encabezado\Engine\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\debug.frag">
+      <Filter>Archivos de encabezado\Engine\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\debug.vert">
+      <Filter>Archivos de encabezado\Engine\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\instanceAnimation.frag">
+      <Filter>Archivos de encabezado\Engine\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\instanceAnimation.vert">
+      <Filter>Archivos de encabezado\Engine\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\instanceModel.frag">
+      <Filter>Archivos de encabezado\Engine\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\instanceModel.vert">
+      <Filter>Archivos de encabezado\Engine\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\model.frag">
+      <Filter>Archivos de encabezado\Engine\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

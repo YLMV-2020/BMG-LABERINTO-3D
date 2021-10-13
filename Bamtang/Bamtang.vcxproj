@@ -154,14 +154,21 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BoneMatrix.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CubeMapTexture.h" />
     <ClInclude Include="Event_Application.h" />
+    <ClInclude Include="E_MessageType.h" />
     <ClInclude Include="Framebuffer.h" />
+    <ClInclude Include="Ground.h" />
     <ClInclude Include="GUI_Application.h" />
     <ClInclude Include="GUI_Lighting.h" />
     <ClInclude Include="GUI_Setting.h" />
+    <ClInclude Include="IBaseComponent.h" />
+    <ClInclude Include="IBaseMessage.h" />
     <ClInclude Include="IGraphicalUserInterface.h" />
     <ClInclude Include="imconfig.h" />
+    <ClInclude Include="IMesh.h" />
     <ClInclude Include="imgui.h" />
     <ClInclude Include="imgui_impl_glfw.h" />
     <ClInclude Include="imgui_impl_opengl3.h" />
@@ -169,11 +176,42 @@
     <ClInclude Include="imstb_rectpack.h" />
     <ClInclude Include="imstb_textedit.h" />
     <ClInclude Include="imstb_truetype.h" />
-    <ClInclude Include="Input.h" />
+    <ClInclude Include="InputManager.h" />
     <ClInclude Include="IObject.h" />
     <ClInclude Include="Maze.h" />
+    <ClInclude Include="MeshComponent.h" />
+    <ClInclude Include="Mesh_Static.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Application.h" />
+    <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="Shader.h" />
+    <ClInclude Include="Skybox.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="TimeManager.h" />
+    <ClInclude Include="Vertex.h" />
+    <ClInclude Include="VertexBoneData.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shaders\animation.frag" />
+    <None Include="assets\shaders\animation.vert" />
+    <None Include="assets\shaders\avatar.frag" />
+    <None Include="assets\shaders\avatar.vert" />
+    <None Include="assets\shaders\cubemaps.frag" />
+    <None Include="assets\shaders\cubemaps.vert" />
+    <None Include="assets\shaders\debug.frag" />
+    <None Include="assets\shaders\debug.vert" />
+    <None Include="assets\shaders\instanceAnimation.frag" />
+    <None Include="assets\shaders\instanceAnimation.vert" />
+    <None Include="assets\shaders\instanceModel.frag" />
+    <None Include="assets\shaders\instanceModel.vert" />
+    <None Include="assets\shaders\model.frag" />
+    <None Include="assets\shaders\model.vert" />
+    <None Include="assets\shaders\skybox.frag" />
+    <None Include="assets\shaders\skybox.vert" />
+    <None Include="assets\shaders\sol.frag" />
+    <None Include="assets\shaders\sol.vert" />
+    <None Include="assets\shaders\terrain.frag" />
+    <None Include="assets\shaders\terrain.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

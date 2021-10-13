@@ -9,7 +9,7 @@ namespace Bamtang
         GLFWwindow* window;
 
         Camera* camera;
-        Input* input;
+        InputManager* inputManager;
 
         std::function<void(int width, int height)> resize;
         std::function<void(int key, int scancode, int action, int mods)> keyboard;
@@ -31,7 +31,7 @@ namespace Bamtang
         {
             this->window = _window;
             this->camera = _camera;
-            this->input = Input::Instance(this->window, this->camera);
+            this->inputManager = InputManager::Instance(this->window, this->camera);
             Start();
         }
 
@@ -90,7 +90,7 @@ namespace Bamtang
             mousePosition = [&](double xpos, double ypos)
             {
                 //input->processMouse(xpos, ypos);
-                input->ProcessMouse(xpos, ypos);
+                inputManager->ProcessMouse(xpos, ypos);
             };
 
             offset = [&](float xoffset, float yoffset)
@@ -102,8 +102,7 @@ namespace Bamtang
             {
                 if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
                 {
-                    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-                    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                    inputManager->ChangeCursor();
                 }
             };
 

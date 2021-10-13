@@ -5,16 +5,30 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 #include <iostream>
 #include <functional>
 #include <queue>
+#include <map>
+#include <fstream>
+#include <sstream>
 
 #include "Maze.h"
 
+#include "Shader.h"
+#include "Texture.h"
 #include "Framebuffer.h"
 
+#include "ResourceManager.h"
+#include "TimeManager.h"
+
 #include "Camera.h"
-#include "Input.h"
+#include "Skybox.h"
+#include "Ground.h"
+
+#include "InputManager.h"
 
 #include "GUI_Application.h"
 
@@ -40,7 +54,13 @@ namespace Bamtang
 
         // ENGINE
         Camera* camera;
-        Input *input;
+        Skybox* skybox;
+        Ground* ground;
+
+        //MANAGERS
+        InputManager* inputManager;
+        TimeManager* timeManager;
+        ResourceManager* resourceManager;
 
         // EVENTS
         Event_Application* event_app;
@@ -58,7 +78,12 @@ namespace Bamtang
             this->framebuffer = new Framebuffer(WIDTH, HEIGHT);
             // --------- ENGINE ----------- //
             this->camera = Camera::Instance(WIDTH, HEIGHT);
-            this->input = Input::Instance(window, camera);
+            this->skybox = new Skybox("bosque", "png");
+            this->ground = new Ground("marble.jpg", glm::vec3(100, -0.01f, 100), 50.0f);
+            // --------- MANAGERS ----------- //
+            this->inputManager = InputManager::Instance(window, camera);
+            this->timeManager = TimeManager::Instance();
+            this->resourceManager = ResourceManager::Instance();
             // --------- EVENTS ----------- //
             this->event_app = Event_Application::Instance(window, camera);
             // --------- GUI ----------- //
@@ -95,24 +120,37 @@ namespace Bamtang
 
         void Update()
         {
+            inputManager->ProccessKeyboard();
+            inputManager->ProcessCameraMovement(timeManager->GetDeltaTime());
+            gui_app->Update();
+            camera->Update();
+        }
+
+        void Render()
+        {
+            skybox->Render(*camera, glm::vec3(1.0f));
+            ground->Render(*camera, glm::vec3(1.0f));
         }
 
         void Render3D()
         {
             while (!glfwWindowShouldClose(window))
             {
+                timeManager->SetTime(glfwGetTime());
+                
                 glfwPollEvents();
 
-                input->Keyboard();
-                gui_app->Update();
+                glm::mat4 ProjectionMatrix = camera->GetProjectionMatrix();
+                glm::mat4 ViewMatrix = camera->GetViewMatrix();
+
+                Update();
 
                 glBindFramebuffer(GL_FRAMEBUFFER, framebuffer->Update());
                 {
                     glClearColor(0, 1, 1, 0);
                     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-                    //object
-
+                    Render();
                 }
                 glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

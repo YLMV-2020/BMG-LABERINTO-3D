@@ -24,6 +24,8 @@ namespace Bamtang
         float yaw;
         float pitch;
 
+        float speed = 1;
+
     public:
 
         static Camera* Instance(unsigned int WIDTH, unsigned int HEIGHT)
@@ -44,24 +46,29 @@ namespace Bamtang
 
         void Start()
         {
-            this->up = glm::vec3(0, 1, 0);
+            this->up = glm::vec3(0.0f, 1.0f, 0.0f);
             this->front = glm::vec3(0.0f, 0.0f, -1.0f);
-
             this->position = glm::vec3(5.0f, 10.0f, 10.75f);
-
             this->projection = glm::perspective(glm::radians(fov), (float)WIDTH / (float)HEIGHT, near, far);
             this->view = glm::lookAt(position, position + front, up);
         }
 
     public:
 
+        void Update()
+        {
+            this->view = glm::lookAt(position, position + front, up);
+        }
+
         glm::mat4 GetViewMatrix()
         {
+            //return glm::lookAt(position, position + front, up);
             return view;
         }
 
         glm::mat4 GetProjectionMatrix()
         {
+            //return glm::perspective(glm::radians(fov), (float)WIDTH / (float)HEIGHT, near, far);
             return projection;
         }
 
@@ -115,8 +122,35 @@ namespace Bamtang
             return this->up;
         }
 
+        unsigned int GetWidth()
+        {
+            return this->WIDTH;
+        }
+
+        unsigned int GetHeight()
+        {
+            return this->HEIGHT;
+        }
+
+        float GetFov()
+        {
+            return this->fov;
+        }
+
+        float GetNear()
+        {
+            return this->near;
+        }
+
+        float GetFar()
+        {
+            return this->far;
+        }
+
+        float GetSpeed()
+        {
+            return this->speed;
+        }
+
     };
-
-
-
 }
