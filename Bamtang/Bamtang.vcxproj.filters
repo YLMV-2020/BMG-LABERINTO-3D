@@ -131,9 +131,6 @@
     <ClInclude Include="GUI_Lighting.h">
       <Filter>Archivos de encabezado\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="Object.h">
-      <Filter>Archivos de encabezado\Engine\GameObject</Filter>
-    </ClInclude>
     <ClInclude Include="IMeshComponent.h">
       <Filter>Archivos de encabezado\Interfaces</Filter>
     </ClInclude>
@@ -185,14 +182,14 @@
     <ClInclude Include="GameObject.h">
       <Filter>Archivos de encabezado\Engine\GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectDynamic.h">
-      <Filter>Archivos de encabezado\Engine\GameObject</Filter>
-    </ClInclude>
     <ClInclude Include="RenderComponent.h">
       <Filter>Archivos de encabezado\Engine\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="AnimatorComponent.h">
       <Filter>Archivos de encabezado\Engine\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="E_ComponentType.h">
+      <Filter>Archivos de encabezado\Enumerations</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

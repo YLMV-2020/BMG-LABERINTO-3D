@@ -1,13 +1,16 @@
 
 namespace Bamtang
 {
-    class RennderComponent : public IObject
+    class RenderComponent : public IBaseComponent
     {
     private:
 
         std::vector<Texture> textures;
         std::vector<MeshComponent*> meshes;
+
         std::string directory;
+        glm::mat4 transform;
+
         bool gammaCorrection;
         bool hasBone = false;
 
@@ -15,26 +18,27 @@ namespace Bamtang
 
     public:
 
-
-        RennderComponent(std::string const& path, glm::vec3 position, glm::vec3 scale = glm::vec3(1.0f), glm::vec3 rotation = glm::vec3(0.0f), bool gamma = false) : gammaCorrection(gamma)
+        RenderComponent(std::string const& path, bool gamma = false) : gammaCorrection(gamma)
         {
-            this->position = position;
-            this->rotation = rotation;
-            this->scale = scale;
-
             LoadModel(path);
+
         }
 
+        ~RenderComponent() {}
 
+        bool SendMessage(IBaseMessage* msg) override { return false; }
 
-        ~RennderComponent() {}
+        void Render(Shader& shader) override
+        {
+
+        }
 
         void AddAnimator(AnimatorComponent* animator)
         {
             this->m_animator = animator;
         }
 
-        void Draw(Shader& shader) override
+        void Draw(Shader& shader) 
         {
             if (hasBone) m_animator->Draw(shader);
 
@@ -42,22 +46,12 @@ namespace Bamtang
                 meshes[i]->Render(shader);
         }
 
-        void Render(Camera& camera, Shader& shader) override
+        void Render(Camera& camera, Shader& shader) 
         {
             shader.Use();
 
             glm::mat4 view = camera.GetViewMatrix();
             glm::mat4 projection = camera.GetProjectionMatrix();
-
-            transform = glm::mat4(1.0f);
-
-            transform = glm::translate(transform, position);
-
-            transform = glm::rotate(transform, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-            transform = glm::rotate(transform, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-            transform = glm::rotate(transform, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-
-            transform = glm::scale(transform, scale);
 
             //shader.SetVec3("viewPos", camera.GetPosition());
 
@@ -74,7 +68,7 @@ namespace Bamtang
             this->transform = transform;
         }
 
-        void UpdateTime(float currentFrame)
+        void UpdateTime(float &currentFrame)
         {
             m_animator->UpdateTime(currentFrame);
         }
@@ -85,13 +79,12 @@ namespace Bamtang
         }
 
     private:
-        // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
+        
         void LoadModel(std::string const& path)
         {
 
             AddAnimator(new AnimatorComponent());
             
-
             m_animator->scene[0] = m_animator->import[0].ReadFile(path,
                 aiProcess_JoinIdenticalVertices |
                 aiProcess_SortByPType |
@@ -131,25 +124,18 @@ namespace Bamtang
             glBindVertexArray(0);
         }
 
-
-
-        // processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
         void ProccesNode(aiNode* node, const aiScene* scene)
         {
-            // process each mesh located at the current node
             for (unsigned int i = 0; i < node->mNumMeshes; i++)
             {
-                // the node object only contains indices to index the actual objects in the scene. 
-                // the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
                 aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
                 meshes.push_back(ProcessMesh(mesh, scene));
             }
-            // after we've processed all of the meshes (if any) we then recursively process each of the children nodes
+            
             for (unsigned int i = 0; i < node->mNumChildren; i++)
             {
                 ProccesNode(node->mChildren[i], scene);
             }
-
         }
 
         MeshComponent* ProcessMesh(aiMesh* mesh, const aiScene* scene)
@@ -260,36 +246,29 @@ namespace Bamtang
             {
                 aiString str;
                 mat->GetTexture(type, i, &str);
-                // check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
+                
                 bool skip = false;
                 for (unsigned int j = 0; j < textures.size(); j++)
                 {
                     if (std::strcmp(textures[j].path.data(), str.C_Str()) == 0)
                     {
                         texturesLoad.push_back(textures[j]);
-                        skip = true; // a texture with the same filepath has already been loaded, continue to next one. (optimization)
+                        skip = true; 
                         break;
                     }
                 }
                 if (!skip)
-                {   // if texture hasn't been loaded already, load it
+                {   
                     Texture texture;
                     std::cout << typeName << "\n";
                     texture.ID = ResourceManager::Instance()->LoadTexture(typeName, str.C_Str(), this->directory);
                     texture.type = typeName;
                     texture.path = str.C_Str();
                     texturesLoad.push_back(texture);
-                    textures.push_back(texture);  // store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.
+                    textures.push_back(texture);  
                 }
             }
             return texturesLoad;
-        }
-
-
-
-        void Start() override
-        {
-
         }
 
     };

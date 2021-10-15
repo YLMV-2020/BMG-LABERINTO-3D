@@ -159,6 +159,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CubeMapTexture.h" />
     <ClInclude Include="Event_Application.h" />
+    <ClInclude Include="E_ComponentType.h" />
     <ClInclude Include="E_MessageType.h" />
     <ClInclude Include="Framebuffer.h" />
     <ClInclude Include="GameObject.h" />
@@ -182,9 +183,7 @@
     <ClInclude Include="IObject.h" />
     <ClInclude Include="Maze.h" />
     <ClInclude Include="MeshComponent.h" />
-    <ClInclude Include="Object.h" />
     <ClInclude Include="Application.h" />
-    <ClInclude Include="ObjectDynamic.h" />
     <ClInclude Include="RenderComponent.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Shader.h" />

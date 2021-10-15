@@ -29,6 +29,15 @@ namespace Bamtang
             std::cout << "Debug\n";
         }
 
+        void Update(glm::mat4 transform) override
+        {
+            //this->transform = transform;
+        }
+
+        void Render(Camera& camera, Shader& shader) override
+        {
+        }
+
         void Render(Shader& shader) override
         {
 

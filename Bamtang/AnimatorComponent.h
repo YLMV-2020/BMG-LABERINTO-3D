@@ -1,6 +1,6 @@
 namespace Bamtang
 {
-    class AnimatorComponent
+    class AnimatorComponent : public IBaseComponent
     {
         public:
 
@@ -39,6 +39,22 @@ namespace Bamtang
 
         }
 
+        bool SendMessage(IBaseMessage* msg) override { return false; }
+
+        void Render(Shader& shader)override
+        {
+
+        }
+
+        void Render(Camera& camera, Shader& shader) override
+        {
+        }
+
+        void Update(glm::mat4 transform) override
+        {
+            //this->transform = transform;
+        }
+
         void Draw(Shader& shader)
         {
             std::vector<aiMatrix4x4> transforms;
@@ -52,9 +68,9 @@ namespace Bamtang
             boneID = glGetUniformLocation(shader.GetID(), "bones[0]");
         }
 
-        void UpdateTime(float currentFrame)
+        void UpdateTime(float &currentFrame)
         {
-            if (!pause)
+ /*           if (!pause)*/
                 animationTime = currentFrame - startFrame;
         }
 

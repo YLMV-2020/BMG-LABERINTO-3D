@@ -1,3 +1,5 @@
+#include "E_ComponentType.h"
+
 namespace Bamtang
 {
     class GameObject 
@@ -8,23 +10,72 @@ namespace Bamtang
         glm::vec3 rotation;
         glm::vec3 scale;
 
-        std::list<IBaseComponent*> components;
+        glm::mat4 transform;
+
+        std::map<E_ComponentType, IBaseComponent*> m_components;
 
     public:
 
-        GameObject(std::string const& path, glm::vec3 position, glm::vec3 rotation = glm::vec3(0.0f), glm::vec3 scale = glm::vec3(1.0f), bool gamma = false) /*: gammaCorrection(gamma)*/
+        GameObject(std::string const& path, glm::vec3 position, glm::vec3 scale = glm::vec3(1.0f), glm::vec3 rotation = glm::vec3(0.0f), bool gamma = false)
         {
+            transform = glm::mat4(1.0f);
+            Translate(position);
+            Rotation(rotation);
+            Scale(scale);
 
+            auto render = new RenderComponent(path, gamma);
+
+            render->Update(transform);
+
+            AddComponent(E_ComponentType::Render, render);
+            //AddComponent(new MeshComponent());
         }
 
         ~GameObject() {}
 
-        void AddComponent(IBaseComponent* comp)
+        void AddComponent(E_ComponentType type, IBaseComponent* comp)
         {
-            components.push_back(comp);
+            m_components[type] = comp;
         }
 
-        // draws the model, and thus all its meshes
+        void Translate(glm::vec3 position)
+        {
+            transform = glm::translate(transform, position);
+        }
+
+        void Rotation(glm::vec3 rotation)
+        {
+            transform = glm::rotate(transform, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+            transform = glm::rotate(transform, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+            transform = glm::rotate(transform, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+        }
+
+        void Scale(glm::vec3 scale)
+        {
+            transform = glm::scale(transform, scale);
+        }
+
+        void Update()
+        {
+            std::map<E_ComponentType, IBaseComponent*>::iterator it = m_components.find(E_ComponentType::Render);
+
+            if (it != m_components.end())
+            {
+                it->second->Update(transform);
+            }
+        }
+
+        void UpdateTime(float &currentFrame)
+        {
+            std::map<E_ComponentType, IBaseComponent*>::iterator it = m_components.find(E_ComponentType::Render);
+
+            if (it != m_components.end())
+            {
+                RenderComponent* render = static_cast<RenderComponent*>(it->second);
+                render->UpdateTime(currentFrame);
+            }
+        }
+
         void Draw(Shader& shader) 
         {
 
@@ -32,53 +83,35 @@ namespace Bamtang
 
         void Render(Camera& camera, Shader& shader) 
         {
-            //shader.Use();
 
-            //glm::mat4 view = camera.GetViewMatrix();
-            //glm::mat4 projection = camera.GetProjectionMatrix();
+            //std::list<IBaseComponent*>::iterator compIt = components.begin();
+            //for (compIt; compIt != components.end(); ++compIt)
+            //{
+            //   /* MeshComponent* mesh = static_cast<MeshComponent*>(*compIt);
+            //    if (typeid(mesh) == typeid(MeshComponent*))
+            //    {
 
-            //transform = glm::mat4(1.0f);
+            //        std::cout << "YES" << "\n";
+            //    }
+            //    else
+            //    {
+            //        std::cout << typeid(MeshComponent*).name() << "\n";
 
-            //transform = glm::translate(transform, position);
+            //    }
+            //    mesh->Debug();*/
+            //    (*compIt)->Render(camera, shader);
+            //}
 
-            //transform = glm::rotate(transform, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-            //transform = glm::rotate(transform, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-            //transform = glm::rotate(transform, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+            std::map<E_ComponentType, IBaseComponent*>::iterator it = m_components.find(E_ComponentType::Render);
 
-            //transform = glm::scale(transform, scale);
-
-            ////shader.SetVec3("viewPos", camera.GetPosition());
-
-            //shader.SetMat4("model", transform);
-            //shader.SetMat4("view", view);
-            //shader.SetMat4("projection", projection);
-
-            std::list<IBaseComponent*>::iterator compIt = components.begin();
-            for (compIt; compIt != components.end(); ++compIt)
+            if (it != m_components.end())
             {
-                MeshComponent* mesh = static_cast<MeshComponent*>(*compIt);
-                if (typeid(mesh) == typeid(MeshComponent*))
-                {
-
-                    std::cout << "YES" << "\n";
-                }
-                else
-                {
-                    std::cout << typeid(MeshComponent*).name() << "\n";
-
-                }
-                mesh->Debug();
-                (*compIt)->Render(shader);
+                it->second->Render(camera, shader);
             }
 
-            //for (unsigned int i = 0; i < components.size(); i++)
-            //    components[i]->Render(shader);
         }
 
 
-
-
-       
 
     };
 
