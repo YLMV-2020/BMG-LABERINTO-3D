@@ -16,12 +16,12 @@ namespace Bamtang
 
         std::vector<Texture> textures;
         std::vector<Texture> textures_loaded;
-        std::vector<MeshComponent> meshes;
+        std::vector<MeshComponent*> meshes;
 
         std::string directory;
         bool textureAssimp;
 
-        Assimp::Importer import[MAX_ANIMATIONS];
+		Assimp::Importer import[MAX_ANIMATIONS];
         const aiScene* scene[MAX_ANIMATIONS];
 
         std::unordered_map<std::string, GLuint> mapBone;
@@ -45,24 +45,26 @@ namespace Bamtang
 
         GLuint numAnimations = 0;
         GLuint cantidad;
-        int currentAnimation;
 
 
     public:
+        int currentAnimation;
 
-        ObjectDynamic(std::string const& path, Shader& shader, glm::vec3 position, glm::vec3 rotation = glm::vec3(0.0f), glm::vec3 scale = glm::vec3(1.0f))
+        ObjectDynamic(std::string const& path, glm::vec3 position, glm::vec3 scale = glm::vec3(1.0f), glm::vec3 rotation = glm::vec3(0.0f))
         {
             this->position = position;
-            this->rotation = rotation;
             this->scale = scale;
-
-            boneID = glGetUniformLocation(shader.GetID(), "bones[0]");
-
-            this->startFrame = glfwGetTime();
-
+            this->rotation = rotation;
 			textureAssimp = true;
 
+            
+
             loadModel(path);
+
+			//boneID = glGetUniformLocation(shader.GetID(), "bones[0]");
+
+			this->startFrame = glfwGetTime();
+
 
         }
 
@@ -103,7 +105,7 @@ namespace Bamtang
 			glUniformMatrix4fv(boneID, transforms.size(), GL_TRUE, (const GLfloat*)&transforms[0]);
 
 			for (unsigned int i = 0; i < meshes.size(); i++)
-				meshes[i].Render(shader);
+				meshes[i]->Render(shader);
 		}
 		
 
@@ -122,6 +124,7 @@ namespace Bamtang
 		{
 			numAnimations++;
 			const std::string ruta =/* directory + "/" +*/ path;
+
 			scene[numAnimations] = import[numAnimations].ReadFile(ruta,
 				aiProcess_JoinIdenticalVertices |
 				aiProcess_SortByPType |
@@ -135,6 +138,7 @@ namespace Bamtang
 				std::cout << "error assimp : " << import[numAnimations].GetErrorString() << "\n";
 				return;
 			}
+
 
 			for (GLuint i = 0; i < scene[numAnimations]->mNumAnimations; i++)
 			{
@@ -156,6 +160,7 @@ namespace Bamtang
 
 		void loadModel(std::string const& path)
 		{
+
 			scene[0] = import[0].ReadFile(path,
 				aiProcess_JoinIdenticalVertices |
 				aiProcess_SortByPType |
@@ -170,13 +175,15 @@ namespace Bamtang
 				return;
 			}
 
+			
+
+			directory = path.substr(0, path.find_last_of('/'));
+			processNode(scene[0]->mRootNode, scene[0]);
+
 			matrixInverse = scene[0]->mRootNode->mTransformation;
 			matrixInverse.Inverse();
 
 			loadAnimations();
-
-			directory = path.substr(0, path.find_last_of('/'));
-			processNode(scene[0]->mRootNode, scene[0]);
 
 			glBindVertexArray(0);
 		}
@@ -200,16 +207,22 @@ namespace Bamtang
 
 		void processNode(aiNode* node, const aiScene* scene)
 		{
-			MeshComponent mesh;
-			for (GLuint i = 0; i < scene->mNumMeshes; i++)
+			//MeshComponent mesh;
+			for (unsigned int i = 0; i < node->mNumMeshes; i++)
 			{
-				aiMesh* aiMesh = scene->mMeshes[i];
-				mesh = processMesh(aiMesh, scene);
-				meshes.push_back(mesh);
+				// the node object only contains indices to index the actual objects in the scene. 
+				// the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
+				aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+				meshes.push_back(processMesh(mesh, scene));
+			}
+			// after we've processed all of the meshes (if any) we then recursively process each of the children nodes
+			for (unsigned int i = 0; i < node->mNumChildren; i++)
+			{
+				processNode(node->mChildren[i], scene);
 			}
 		}
 
-		MeshComponent processMesh(aiMesh* mesh, const aiScene* scene)
+		MeshComponent* processMesh(aiMesh* mesh, const aiScene* scene)
 		{
 			std::vector<Vertex> vertices;
 			std::vector<GLuint> indices;
@@ -286,7 +299,7 @@ namespace Bamtang
 				{
 					GLuint vertex_id = mesh->mBones[i]->mWeights[j].mVertexId;
 					float weight = mesh->mBones[i]->mWeights[j].mWeight;
-					bones[vertex_id].addBoneData(bone_index, weight);
+					bones[vertex_id].AddBoneData(bone_index, weight);
 				}
 			}
 
@@ -305,10 +318,10 @@ namespace Bamtang
 				std::vector<Texture> heightMaps = LoadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
 				textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
-				return MeshComponent(vertices, indices, textures, bones);
+				return new MeshComponent(vertices, indices, textures, bones);
 			}
 
-			return MeshComponent(vertices, indices, this->textures, bones);
+			return new MeshComponent(vertices, indices, this->textures, bones);
 		}
 
 		std::vector<Texture> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)

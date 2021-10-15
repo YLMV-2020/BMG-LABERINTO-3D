@@ -70,7 +70,7 @@ namespace Bamtang
         {
             resize = [&](int width, int height)
             {
-                glViewport(0, 0, width, height);
+                //glViewport(0, 0, width, height);
             };
 
             keyboard = [&](int key, int sancode, int action, int mods)
@@ -102,6 +102,7 @@ namespace Bamtang
                 {
                     inputManager->ChangeCursor();
                 }
+
             };
 
         }

@@ -2,7 +2,7 @@
 
 namespace Bamtang
 {
-    class MeshComponent : public IBaseComponent, public IMesh
+    class MeshComponent : public IBaseComponent, public IMeshComponent
     {
     private:
 

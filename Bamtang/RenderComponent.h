@@ -1,7 +1,7 @@
 
 namespace Bamtang
 {
-    class Object : public IObject, public AnimatorComponent
+    class RennderComponent : public IObject
     {
     private:
 
@@ -9,12 +9,14 @@ namespace Bamtang
         std::vector<MeshComponent*> meshes;
         std::string directory;
         bool gammaCorrection;
+        bool hasBone = false;
 
-        AnimatorComponent* animator = NULL;
+        AnimatorComponent* m_animator = NULL;
 
     public:
 
-        Object(std::string const& path, glm::vec3 position, glm::vec3 scale = glm::vec3(1.0f), glm::vec3 rotation = glm::vec3(0.0f), bool gamma = false) : AnimatorComponent(), gammaCorrection(gamma)
+
+        RennderComponent(std::string const& path, glm::vec3 position, glm::vec3 scale = glm::vec3(1.0f), glm::vec3 rotation = glm::vec3(0.0f), bool gamma = false) : gammaCorrection(gamma)
         {
             this->position = position;
             this->rotation = rotation;
@@ -23,28 +25,18 @@ namespace Bamtang
             LoadModel(path);
         }
 
-        Object(std::string const& path, Shader& shader, glm::vec3 position, glm::vec3 scale = glm::vec3(1.0f), glm::vec3 rotation = glm::vec3(0.0f))
+
+
+        ~RennderComponent() {}
+
+        void AddAnimator(AnimatorComponent* animator)
         {
-            this->position = position;
-            this->scale = scale;
-            this->rotation = rotation;
-
-            boneID = glGetUniformLocation(shader.GetID(), "bones[0]");
-
-            this->startFrame = glfwGetTime();
-
-            LoadModel(path);
-
+            this->m_animator = animator;
         }
-
-        ~Object() {}
 
         void Draw(Shader& shader) override
         {
-            /*std::vector<aiMatrix4x4> transforms;
-
-            boneTransform((double)animationTime, transforms);
-            glUniformMatrix4fv(boneID, transforms.size(), GL_TRUE, (const GLfloat*)&transforms[0]);*/
+            if (hasBone) m_animator->Draw(shader);
 
             for (unsigned int i = 0; i < meshes.size(); i++)
                 meshes[i]->Render(shader);
@@ -69,9 +61,9 @@ namespace Bamtang
 
             //shader.SetVec3("viewPos", camera.GetPosition());
 
-            shader.SetMat4("model", transform);
-            shader.SetMat4("view", view);
             shader.SetMat4("projection", projection);
+            shader.SetMat4("view", view);
+            shader.SetMat4("model", transform);
 
             Draw(shader);
 
@@ -82,12 +74,25 @@ namespace Bamtang
             this->transform = transform;
         }
 
+        void UpdateTime(float currentFrame)
+        {
+            m_animator->UpdateTime(currentFrame);
+        }
+
+        void BindBoneID(Shader& shader)
+        {
+            m_animator->BindBoneID(shader);
+        }
 
     private:
         // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
         void LoadModel(std::string const& path)
         {
-            scene[0] = import[0].ReadFile(path,
+
+            AddAnimator(new AnimatorComponent());
+            
+
+            m_animator->scene[0] = m_animator->import[0].ReadFile(path,
                 aiProcess_JoinIdenticalVertices |
                 aiProcess_SortByPType |
                 aiProcess_Triangulate |
@@ -95,24 +100,38 @@ namespace Bamtang
                 aiProcess_FlipUVs |
                 aiProcess_LimitBoneWeights);
 
-            if (!scene[0] || scene[0]->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !scene[0]->mRootNode)
+            if (!m_animator->scene[0] || m_animator->scene[0]->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !m_animator->scene[0]->mRootNode)
             {
-                std::cout << "error assimp : " << import[0].GetErrorString() << "\n";
+                std::cout << "ERROR::ASSIMP:: " << m_animator->import[0].GetErrorString() << "\n";
                 return;
             }
 
-            matrixInverse = scene[0]->mRootNode->mTransformation;
-            matrixInverse.Inverse();
-
-            LoadAnimations();
-
+            this->hasBone = m_animator->scene[0]->mMeshes[0]->mNumBones > 0 ? true : false;
+            const aiScene* scene = m_animator->scene[0];
+            std::cout << "Has Bone: " << hasBone << "\n";
+            
             directory = path.substr(0, path.find_last_of('/'));
-            ProccesNode(scene[0]->mRootNode, scene[0]);
+            ProccesNode(scene->mRootNode, scene);
+
+            if (hasBone)
+            {
+                m_animator->matrixInverse = m_animator->scene[0]->mRootNode->mTransformation;
+                m_animator->matrixInverse.Inverse();
+
+                m_animator->startFrame = glfwGetTime();
+                m_animator->LoadAnimations();
+            }
+            else
+            {
+                delete m_animator;
+                m_animator = NULL;
+                //m_animator->boneID = glGetUniformLocation(shader.GetID(), "bones[0]");
+            }
 
             glBindVertexArray(0);
         }
 
-        
+
 
         // processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
         void ProccesNode(aiNode* node, const aiScene* scene)
@@ -140,9 +159,9 @@ namespace Bamtang
             std::vector<Texture> textures;
             std::vector<VertexBoneData> bones;
 
-            /*vertices.reserve(mesh->mNumVertices);
+            vertices.reserve(mesh->mNumVertices);
             indices.reserve(mesh->mNumVertices);
-            bones.resize(mesh->mNumVertices);*/
+            bones.resize(mesh->mNumVertices);
 
             for (GLuint i = 0; i < mesh->mNumVertices; i++)
             {
@@ -192,18 +211,18 @@ namespace Bamtang
                 GLuint bone_index = 0;
                 std::string bone_name(mesh->mBones[i]->mName.data);
 
-                if (mapBone.find(bone_name) == mapBone.end())
+                if (m_animator->mapBone.find(bone_name) == m_animator->mapBone.end())
                 {
-                    bone_index = numBones;
-                    numBones++;
+                    bone_index = m_animator->numBones;
+                    m_animator->numBones++;
                     BoneMatrix bi;
-                    matrixBone.push_back(bi);
-                    matrixBone[bone_index].offsetMatrix = mesh->mBones[i]->mOffsetMatrix;
-                    mapBone[bone_name] = bone_index;
+                    m_animator->matrixBone.push_back(bi);
+                    m_animator->matrixBone[bone_index].offsetMatrix = mesh->mBones[i]->mOffsetMatrix;
+                    m_animator->mapBone[bone_name] = bone_index;
                 }
                 else
                 {
-                    bone_index = mapBone[bone_name];
+                    bone_index = m_animator->mapBone[bone_name];
                 }
 
                 for (GLuint j = 0; j < mesh->mBones[i]->mNumWeights; j++)
@@ -213,14 +232,8 @@ namespace Bamtang
                     bones[vertex_id].AddBoneData(bone_index, weight);
                 }
             }
-            // process materials
+
             aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-            // we assume a convention for sampler names in the shaders. Each diffuse texture should be named
-            // as 'texture_diffuseN' where N is a sequential number ranging from 1 to MAX_SAMPLER_NUMBER. 
-            // Same applies to other texture as the following list summarizes:
-            // diffuse: texture_diffuseN
-            // specular: texture_specularN
-            // normal: texture_normalN
 
             // 1. diffuse maps
             std::vector<Texture> diffuseMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
@@ -235,12 +248,11 @@ namespace Bamtang
             std::vector<Texture> heightMaps = LoadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
             textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
-            // return a mesh object created from the extracted mesh data
+            if (hasBone) return new MeshComponent(vertices, indices, textures, bones);
+
             return new MeshComponent(vertices, indices, textures);
         }
 
-        // checks all material textures of a given type and loads the textures if they're not loaded yet.
-        // the required info is returned as a Texture struct.
         std::vector<Texture> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
         {
             std::vector<Texture> texturesLoad;
@@ -273,7 +285,7 @@ namespace Bamtang
             return texturesLoad;
         }
 
-        
+
 
         void Start() override
         {

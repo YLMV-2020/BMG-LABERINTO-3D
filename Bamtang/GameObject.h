@@ -4,6 +4,10 @@ namespace Bamtang
     {
     private:
 
+        glm::vec3 position;
+        glm::vec3 rotation;
+        glm::vec3 scale;
+
         std::list<IBaseComponent*> components;
 
     public:

@@ -13,7 +13,7 @@ namespace Bamtang
             memset(weights, 0, sizeof(weights));
         }
 
-        void addBoneData(GLuint bone_id, float weight)
+        void AddBoneData(GLuint bone_id, float weight)
         {
             for (GLuint i = 0; i < NUM_BONES_PER_VERTEX; i++)
             {

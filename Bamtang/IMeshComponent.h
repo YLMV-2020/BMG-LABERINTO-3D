@@ -1,11 +1,11 @@
 
 namespace Bamtang
 {
-    class IMesh
+    class IMeshComponent
     {
     public:
 
-        virtual ~IMesh() {}
+        virtual ~IMeshComponent() {}
 
         std::vector<Vertex> vertices;
         std::vector<GLuint> indices;

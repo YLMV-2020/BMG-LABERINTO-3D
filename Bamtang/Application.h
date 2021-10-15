@@ -40,10 +40,14 @@
 
 #include "IObject.h"
 
-
-#include "IMesh.h"
 #include "IBaseComponent.h"
+
+#include "IMeshComponent.h"
 #include "MeshComponent.h"
+
+#include "AnimatorComponent.h"
+#include "RenderComponent.h"
+
 
 #include "Object.h"
 #include "ObjectDynamic.h"
@@ -88,9 +92,10 @@ namespace Bamtang
 
         Shader shaderObject;
         Shader shaderObjectDynamic;
-        Object* object;
-        Object* object2;
+        RennderComponent* object;
+        RennderComponent* object2;
         ObjectDynamic* dynamic;
+        //ObjectDynamic* dynamic2;
 
 	public:
 
@@ -119,10 +124,12 @@ namespace Bamtang
 
             this->shaderObject = Shader("assets/shaders/object.vert", "assets/shaders/object.frag");
             this->shaderObjectDynamic = Shader("assets/shaders/animation.vert", "assets/shaders/animation.frag");
-            this->object = new Object("assets/objects/plano/plano.obj", glm::vec3(0.0f, 1.0f, 0.0f));
-            this->object2 = new Object("assets/objects/block/block.obj", glm::vec3(20.1f, 1.0f, 100.0f));
-            this->dynamic =new ObjectDynamic("assets/animations/bruja/bruja.dae" , shaderObjectDynamic, glm::vec3(1.0f, 1.0f, 0.0f));
+            this->object = new RennderComponent("assets/animations/character/character.dae", glm::vec3(20.0f, 1.0f, 20.0f));
+            this->object2 = new RennderComponent("assets/objects/plano/plano.obj", glm::vec3(20.1f, 1.0f, 100.0f));
+            this->dynamic =new ObjectDynamic("assets/animations/bruja/bruja.dae" , glm::vec3(1.0f, 1.0f, 0.0f));
             this->dynamic->addAnimation("assets/animations/bruja/Samba Dancing.dae");
+            this->dynamic->currentAnimation = 1;
+            //this->dynamic2 =new ObjectDynamic("assets/animations/character/character.dae" , glm::vec3(12.0f, 1.0f, 0.0f));
         }
 
         ~Application()
@@ -154,7 +161,7 @@ namespace Bamtang
         void Update()
         {
 
-            inputManager->ProccessKeyboard();
+            inputManager->ProccessKeyboard(dynamic);
             inputManager->ProcessCameraMovement(timeManager->GetDeltaTime());
             gui_app->Update();
             camera->Update();
@@ -168,11 +175,16 @@ namespace Bamtang
             skybox->Render(*camera, glm::vec3(1.0f));
             ground->Render(*camera, glm::vec3(1.0f));
 
-            object->Render(*camera, shaderObject);
+
             object2->Render(*camera, shaderObject);
 
+            object->UpdateTime(timeManager->GetLastFrame());
             dynamic->updateTime(timeManager->GetLastFrame());
+            //dynamic2->updateTime(timeManager->GetLastFrame());
+
+            object->Render(*camera, shaderObjectDynamic);
             dynamic->render(*camera, shaderObjectDynamic);
+            //dynamic2->render(*camera, shaderObjectDynamic);
 
         }
 

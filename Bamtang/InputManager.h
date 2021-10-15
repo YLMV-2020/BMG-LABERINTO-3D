@@ -26,10 +26,15 @@ namespace Bamtang
             return &input;
         }
 
-        void ProccessKeyboard()
+        void ProccessKeyboard(ObjectDynamic*d)
         {
             if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
             {
+
+                if (d->currentAnimation == 1)
+                {
+                    d->currentAnimation = 0;
+               }
                 
             }
             else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)

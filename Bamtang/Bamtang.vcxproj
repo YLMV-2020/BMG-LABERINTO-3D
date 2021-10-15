@@ -154,6 +154,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnimatorComponent.h" />
     <ClInclude Include="BoneMatrix.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CubeMapTexture.h" />
@@ -169,7 +170,7 @@
     <ClInclude Include="IBaseMessage.h" />
     <ClInclude Include="IGraphicalUserInterface.h" />
     <ClInclude Include="imconfig.h" />
-    <ClInclude Include="IMesh.h" />
+    <ClInclude Include="IMeshComponent.h" />
     <ClInclude Include="imgui.h" />
     <ClInclude Include="imgui_impl_glfw.h" />
     <ClInclude Include="imgui_impl_opengl3.h" />
@@ -184,6 +185,7 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="ObjectDynamic.h" />
+    <ClInclude Include="RenderComponent.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Skybox.h" />

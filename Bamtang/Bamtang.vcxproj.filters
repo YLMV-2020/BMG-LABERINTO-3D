@@ -134,7 +134,7 @@
     <ClInclude Include="Object.h">
       <Filter>Archivos de encabezado\Engine\GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="IMesh.h">
+    <ClInclude Include="IMeshComponent.h">
       <Filter>Archivos de encabezado\Interfaces</Filter>
     </ClInclude>
     <ClInclude Include="BoneMatrix.h">
@@ -186,6 +186,12 @@
       <Filter>Archivos de encabezado\Engine\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="ObjectDynamic.h">
+      <Filter>Archivos de encabezado\Engine\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderComponent.h">
+      <Filter>Archivos de encabezado\Engine\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatorComponent.h">
       <Filter>Archivos de encabezado\Engine\GameObject</Filter>
     </ClInclude>
   </ItemGroup>
