@@ -1,18 +1,9 @@
 namespace Bamtang
 {
-    class Texture
+    struct Texture
     {
-    private:
-
-        GLuint ID;
-
-    public:
-
-        Texture() {}
-        ~Texture() {}
-
-        
-        
+        unsigned int ID;
+        std::string type;
+        std::string path;
     };
-
 }

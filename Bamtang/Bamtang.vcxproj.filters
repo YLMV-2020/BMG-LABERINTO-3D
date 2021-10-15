@@ -146,9 +146,6 @@
     <ClInclude Include="VertexBoneData.h">
       <Filter>Archivos de encabezado\Engine\GameObject\SharedTypes</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh_Static.h">
-      <Filter>Archivos de encabezado\Engine\GameObject\Mesh</Filter>
-    </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>Archivos de encabezado\Utility</Filter>
     </ClInclude>
@@ -185,6 +182,12 @@
     <ClInclude Include="Ground.h">
       <Filter>Archivos de encabezado\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Archivos de encabezado\Engine\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectDynamic.h">
+      <Filter>Archivos de encabezado\Engine\GameObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\skybox.vert">
@@ -193,7 +196,7 @@
     <None Include="assets\shaders\skybox.frag">
       <Filter>Archivos de encabezado\Engine\Shaders</Filter>
     </None>
-    <None Include="assets\shaders\model.vert">
+    <None Include="assets\shaders\object.vert">
       <Filter>Archivos de encabezado\Engine\Shaders</Filter>
     </None>
     <None Include="assets\shaders\sol.frag">
@@ -202,10 +205,10 @@
     <None Include="assets\shaders\sol.vert">
       <Filter>Archivos de encabezado\Engine\Shaders</Filter>
     </None>
-    <None Include="assets\shaders\terrain.frag">
+    <None Include="assets\shaders\ground.frag">
       <Filter>Archivos de encabezado\Engine\Shaders</Filter>
     </None>
-    <None Include="assets\shaders\terrain.vert">
+    <None Include="assets\shaders\ground.vert">
       <Filter>Archivos de encabezado\Engine\Shaders</Filter>
     </None>
     <None Include="assets\shaders\animation.frag">
@@ -244,7 +247,7 @@
     <None Include="assets\shaders\instanceModel.vert">
       <Filter>Archivos de encabezado\Engine\Shaders</Filter>
     </None>
-    <None Include="assets\shaders\model.frag">
+    <None Include="assets\shaders\object.frag">
       <Filter>Archivos de encabezado\Engine\Shaders</Filter>
     </None>
   </ItemGroup>

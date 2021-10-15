@@ -18,11 +18,11 @@ namespace Bamtang
 
 		Ground(std::string name, glm::vec3 volumen, float repeat)
 		{
-			this->shader = Shader("assets/shaders/terrain.vert", "assets/shaders/terrain.frag");
+			this->shader = Shader("assets/shaders/ground.vert", "assets/shaders/ground.frag");
 			this->volumen = volumen;
 			this->repeat = repeat;
 
-			std::string path = "assets\\textures\\terrain\\" + name;
+			std::string path = "assets\\textures\\ground\\" + name;
 			name = std::string(name.begin(), name.end() - 4);
 
 			texture = ResourceManager::Instance()->LoadTexture(name, path.c_str());
@@ -37,16 +37,16 @@ namespace Bamtang
 			glm::mat4 model = glm::mat4(1.0f);
 			glm::mat4 view = camera.GetViewMatrix();
 			glm::mat4 projection = camera.GetProjectionMatrix();
-			shader.SetMat4("projection", projection);
+
 			shader.SetMat4("view", view);
+			shader.SetMat4("projection", projection);
+			shader.SetMat4("model", glm::mat4(1.0f));
 			shader.SetVec3("ambient", ambient);
 
 			glBindVertexArray(VAO);
 			glBindTexture(GL_TEXTURE_2D, texture);
-			shader.SetMat4("model", glm::mat4(1.0f));
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 			glBindVertexArray(0);
-
 		}
 
 	private:

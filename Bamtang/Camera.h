@@ -24,7 +24,10 @@ namespace Bamtang
         float yaw;
         float pitch;
 
-        float speed = 1;
+        float minVelocity = 0.3f;
+        float maxVelocity = 5;
+
+        float speed;
 
     public:
 
@@ -48,9 +51,13 @@ namespace Bamtang
         {
             this->up = glm::vec3(0.0f, 1.0f, 0.0f);
             this->front = glm::vec3(0.0f, 0.0f, -1.0f);
-            this->position = glm::vec3(5.0f, 10.0f, 10.75f);
+            this->position = glm::vec3(0.0f, 10.0f, 0.0f);
             this->projection = glm::perspective(glm::radians(fov), (float)WIDTH / (float)HEIGHT, near, far);
             this->view = glm::lookAt(position, position + front, up);
+
+            this->speed = this->minVelocity;
+
+            UpdateVectors();
         }
 
     public:
@@ -60,13 +67,29 @@ namespace Bamtang
             this->view = glm::lookAt(position, position + front, up);
         }
 
-        glm::mat4 GetViewMatrix()
+        void UpdateVectors()
+        {
+            glm::vec3 front;
+            front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+            front.y = sin(glm::radians(pitch));
+            front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+            front = glm::normalize(front);
+
+            this->front = front;
+        }
+
+        void ChangeSpeed()
+        {
+            speed = (speed == minVelocity) ? maxVelocity : minVelocity;
+        }
+
+        glm::mat4 &GetViewMatrix()
         {
             //return glm::lookAt(position, position + front, up);
             return view;
         }
 
-        glm::mat4 GetProjectionMatrix()
+        glm::mat4 &GetProjectionMatrix()
         {
             //return glm::perspective(glm::radians(fov), (float)WIDTH / (float)HEIGHT, near, far);
             return projection;

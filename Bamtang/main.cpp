@@ -8,4 +8,3 @@ int main(int argc, char* argv[])
     application->Render3D();
     return 0;
 }
-

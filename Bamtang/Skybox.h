@@ -121,9 +121,11 @@ namespace Bamtang
 		void Render(Camera& camera, glm::vec3 ambient)
 		{
 			shaderCubeMap.Use();
+
 			glm::mat4 model = glm::mat4(1.0f);
 			glm::mat4 view = camera.GetViewMatrix();
 			glm::mat4 projection = camera.GetProjectionMatrix();
+
 			shaderCubeMap.SetMat4("model", model);
 			shaderCubeMap.SetMat4("view", view);
 			shaderCubeMap.SetMat4("projection", projection);
@@ -142,6 +144,7 @@ namespace Bamtang
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 			glBindVertexArray(0);
 			glDepthFunc(GL_LESS);
+
 		}
 
 	private:

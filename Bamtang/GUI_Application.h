@@ -36,17 +36,17 @@ namespace Bamtang
         {
         }
 
-        void Render(Framebuffer* framebuffer)
+        void NewFrame()
         {
-
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
-
             DockSpace();
+        }
 
-            Display(framebuffer);
-
+        void Render(const GLuint& texture)
+        {
+            Display(texture);
             DisplayGraphicalUserInterface();
 
             ImGui::Render();
@@ -61,7 +61,6 @@ namespace Bamtang
                 ImGui::RenderPlatformWindowsDefault();
                 glfwMakeContextCurrent(backup_current_context);
             }
-
         }
 
     private:
@@ -93,7 +92,7 @@ namespace Bamtang
 
         }
 
-        void Display(Framebuffer* framebuffer)
+        void Display(const GLuint& texture)
         {
             ImGui::Begin("Render", NULL);
             ImDrawList* drawList = ImGui::GetWindowDrawList();
@@ -102,7 +101,7 @@ namespace Bamtang
             display = ImGui::GetCursorScreenPos();
 
             drawList->AddImage(
-                (void*)framebuffer->Display(), display,
+                (void*)texture, display,
                 ImVec2(display.x + displayRender.x - 10, display.y + displayRender.y - 30), ImVec2(0, 1), ImVec2(1, 0)
             );
 
@@ -184,7 +183,7 @@ namespace Bamtang
             {
                 if (ImGui::BeginMenu("Options"))
                 {
-                    ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
+                    //ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
                     ImGui::MenuItem("Padding", NULL, &opt_padding);
                     //ImGui::Separator();
                     ImGui::EndMenu();

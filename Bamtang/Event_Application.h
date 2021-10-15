@@ -70,20 +70,18 @@ namespace Bamtang
         {
             resize = [&](int width, int height)
             {
-                std::cout << "W: " << width << "\n";
-                std::cout << "H: " << height << "\n";
+                glViewport(0, 0, width, height);
             };
 
             keyboard = [&](int key, int sancode, int action, int mods)
             {
-                if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+                if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_PRESS)
                 {
-                   
+                    camera->ChangeSpeed();
                 }
-
-                if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+                else if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_RELEASE)
                 {
-                   
+                    camera->ChangeSpeed();
                 }
             };
 

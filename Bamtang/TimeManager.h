@@ -24,11 +24,16 @@ namespace Bamtang
             lastFrame = currentFrame;
         }
 
-        float GetDeltaTime()
+        float &GetDeltaTime()
         {
             return deltaTime;
         }
         
+        float &GetLastFrame()
+        {
+            return lastFrame;
+        }
+
     };
    
 }

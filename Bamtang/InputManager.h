@@ -28,8 +28,15 @@ namespace Bamtang
 
         void ProccessKeyboard()
         {
-            if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-                std::cout << "TECLA\n";
+            if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+            {
+                
+            }
+            else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
+            {
+                
+            }
+                
         }
 
         void ProcessMouse(double xpos, double ypos)
@@ -52,7 +59,6 @@ namespace Bamtang
 
         void ProcessMouseMovement(float xoffset, float yoffset)
         {
-
             float sensitivity = 0.1f;
             xoffset *= sensitivity;
             yoffset *= sensitivity;
@@ -65,13 +71,7 @@ namespace Bamtang
             if (camera->GetPitch() < -89.0f)
                 camera->SetPitch(-89.0f);
 
-            glm::vec3 front;
-            front.x = cos(glm::radians(camera->GetYaw())) * cos(glm::radians(camera->GetPitch()));
-            front.y = sin(glm::radians(camera->GetPitch()));
-            front.z = sin(glm::radians(camera->GetYaw())) * cos(glm::radians(camera->GetPitch()));
-            front = glm::normalize(front);
-
-            camera->SetFront(front);
+            camera->UpdateVectors();
         }
 
         void ProcessCameraMovement(float deltaTime)

@@ -5,6 +5,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
@@ -12,6 +16,8 @@
 #include <functional>
 #include <queue>
 #include <map>
+#include <unordered_map>
+#include <list>
 #include <fstream>
 #include <sstream>
 
@@ -27,6 +33,21 @@
 #include "Camera.h"
 #include "Skybox.h"
 #include "Ground.h"
+
+#include "Vertex.h"
+#include "VertexBoneData.h"
+#include "BoneMatrix.h"
+
+#include "IObject.h"
+
+
+#include "IMesh.h"
+#include "IBaseComponent.h"
+#include "MeshComponent.h"
+
+#include "Object.h"
+#include "ObjectDynamic.h"
+#include "GameObject.h"
 
 #include "InputManager.h"
 
@@ -65,6 +86,12 @@ namespace Bamtang
         // EVENTS
         Event_Application* event_app;
 
+        Shader shaderObject;
+        Shader shaderObjectDynamic;
+        Object* object;
+        Object* object2;
+        ObjectDynamic* dynamic;
+
 	public:
 
         Application(std::string name, std::string version, unsigned int WIDTH, unsigned int HEIGHT)
@@ -78,8 +105,8 @@ namespace Bamtang
             this->framebuffer = new Framebuffer(WIDTH, HEIGHT);
             // --------- ENGINE ----------- //
             this->camera = Camera::Instance(WIDTH, HEIGHT);
-            this->skybox = new Skybox("bosque", "png");
-            this->ground = new Ground("marble.jpg", glm::vec3(100, -0.01f, 100), 50.0f);
+            this->skybox = new Skybox("skyrender", "tga");
+            this->ground = new Ground("Grass001_2K-JPG\\Grass001_2K_Color.jpg", glm::vec3(100, -0.01f, 100), 50.0f);
             // --------- MANAGERS ----------- //
             this->inputManager = InputManager::Instance(window, camera);
             this->timeManager = TimeManager::Instance();
@@ -88,7 +115,14 @@ namespace Bamtang
             this->event_app = Event_Application::Instance(window, camera);
             // --------- GUI ----------- //
             this->gui_app = new GUI_Application(window, version);
-            
+
+
+            this->shaderObject = Shader("assets/shaders/object.vert", "assets/shaders/object.frag");
+            this->shaderObjectDynamic = Shader("assets/shaders/animation.vert", "assets/shaders/animation.frag");
+            this->object = new Object("assets/objects/plano/plano.obj", glm::vec3(0.0f, 1.0f, 0.0f));
+            this->object2 = new Object("assets/objects/block/block.obj", glm::vec3(20.1f, 1.0f, 100.0f));
+            this->dynamic =new ObjectDynamic("assets/animations/bruja/bruja.dae" , shaderObjectDynamic, glm::vec3(1.0f, 1.0f, 0.0f));
+            this->dynamic->addAnimation("assets/animations/bruja/Samba Dancing.dae");
         }
 
         ~Application()
@@ -98,47 +132,58 @@ namespace Bamtang
 
         void Start(std::string name, std::string version)
         {
-            glfwInit();
+            if (glfwInit() == GL_FALSE) return;
+
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, version[0] - '0');
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, version[1] - '0');
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
             //glfwWindowHint(GLFW_RESIZABLE, false);
 
-            window = glfwCreateWindow(WIDTH, HEIGHT, name.c_str(), nullptr, nullptr);
+            window = glfwCreateWindow(WIDTH, HEIGHT, name.c_str(), NULL, NULL);
             glfwMakeContextCurrent(window);
 
             if (GLenum err = glewInit()) return;
 
             //glfwSwapInterval(0);
 
-            glViewport(0, 0, WIDTH, HEIGHT);
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glEnable(GL_DEPTH_TEST);
 
         }
 
         void Update()
         {
+
             inputManager->ProccessKeyboard();
             inputManager->ProcessCameraMovement(timeManager->GetDeltaTime());
             gui_app->Update();
             camera->Update();
+
+
         }
 
         void Render()
         {
+
             skybox->Render(*camera, glm::vec3(1.0f));
             ground->Render(*camera, glm::vec3(1.0f));
+
+            object->Render(*camera, shaderObject);
+            object2->Render(*camera, shaderObject);
+
+            dynamic->updateTime(timeManager->GetLastFrame());
+            dynamic->render(*camera, shaderObjectDynamic);
+
         }
 
         void Render3D()
         {
+            
             while (!glfwWindowShouldClose(window))
             {
                 timeManager->SetTime(glfwGetTime());
                 
-                glfwPollEvents();
+                gui_app->NewFrame();
 
                 glm::mat4 ProjectionMatrix = camera->GetProjectionMatrix();
                 glm::mat4 ViewMatrix = camera->GetViewMatrix();
@@ -147,16 +192,17 @@ namespace Bamtang
 
                 glBindFramebuffer(GL_FRAMEBUFFER, framebuffer->Update());
                 {
-                    glClearColor(0, 1, 1, 0);
+                    glClearColor(0, 0, 0, 0);
                     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
                     Render();
                 }
                 glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-                gui_app->Render(framebuffer);
+                gui_app->Render(framebuffer->Display());
 
                 glfwSwapBuffers(window);
+                glfwPollEvents();
             }
         }
 

@@ -78,7 +78,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)\include;$(SolutionDir)\include\OVR;$(SolutionDir)\include\OVRAvatarSDK;$(SolutionDir)\include\OVRPlatform;$(SolutionDir)\include\BulletPhysics;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -124,7 +124,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32s.lib;glew32.lib;LibOVR.lib;libovravatar.lib;LibOVRPlatform64_1.lib;Bullet2FileLoader_Debug.lib;BulletCollision_Debug.lib;BulletDynamics_Debug.lib;BulletFileLoader_Debug.lib;BulletInverseDynamics_Debug.lib;BulletInverseDynamicsUtils_Debug.lib;BulletSoftBody_Debug.lib;BulletWorldImporter_Debug.lib;LinearMath_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32s.lib;glew32.lib;assimpd.lib;irrKlang.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -160,6 +160,7 @@
     <ClInclude Include="Event_Application.h" />
     <ClInclude Include="E_MessageType.h" />
     <ClInclude Include="Framebuffer.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="Ground.h" />
     <ClInclude Include="GUI_Application.h" />
     <ClInclude Include="GUI_Lighting.h" />
@@ -180,9 +181,9 @@
     <ClInclude Include="IObject.h" />
     <ClInclude Include="Maze.h" />
     <ClInclude Include="MeshComponent.h" />
-    <ClInclude Include="Mesh_Static.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Application.h" />
+    <ClInclude Include="ObjectDynamic.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Skybox.h" />
@@ -204,14 +205,14 @@
     <None Include="assets\shaders\instanceAnimation.vert" />
     <None Include="assets\shaders\instanceModel.frag" />
     <None Include="assets\shaders\instanceModel.vert" />
-    <None Include="assets\shaders\model.frag" />
-    <None Include="assets\shaders\model.vert" />
+    <None Include="assets\shaders\object.frag" />
+    <None Include="assets\shaders\object.vert" />
     <None Include="assets\shaders\skybox.frag" />
     <None Include="assets\shaders\skybox.vert" />
     <None Include="assets\shaders\sol.frag" />
     <None Include="assets\shaders\sol.vert" />
-    <None Include="assets\shaders\terrain.frag" />
-    <None Include="assets\shaders\terrain.vert" />
+    <None Include="assets\shaders\ground.frag" />
+    <None Include="assets\shaders\ground.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
