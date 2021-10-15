@@ -28,22 +28,12 @@ namespace Bamtang
 
         bool SendMessage(IBaseMessage* msg) override { return false; }
 
-        void Render(Shader& shader) override
-        {
-
-        }
-
-        void AddAnimator(AnimatorComponent* animator)
-        {
-            this->m_animator = animator;
-        }
-
         void Draw(Shader& shader) 
         {
             if (hasBone) m_animator->Draw(shader);
 
             for (unsigned int i = 0; i < meshes.size(); i++)
-                meshes[i]->Render(shader);
+                meshes[i]->Draw(shader);
         }
 
         void Render(Camera& camera, Shader& shader) 
@@ -63,7 +53,7 @@ namespace Bamtang
 
         }
 
-        void Update(glm::mat4 transform) override
+        void Update(glm::mat4 transform) 
         {
             this->transform = transform;
         }
@@ -83,8 +73,7 @@ namespace Bamtang
         void LoadModel(std::string const& path)
         {
 
-            AddAnimator(new AnimatorComponent());
-            
+            m_animator = new AnimatorComponent();
             m_animator->scene[0] = m_animator->import[0].ReadFile(path,
                 aiProcess_JoinIdenticalVertices |
                 aiProcess_SortByPType |
@@ -101,7 +90,6 @@ namespace Bamtang
 
             this->hasBone = m_animator->scene[0]->mMeshes[0]->mNumBones > 0 ? true : false;
             const aiScene* scene = m_animator->scene[0];
-            std::cout << "Has Bone: " << hasBone << "\n";
             
             directory = path.substr(0, path.find_last_of('/'));
             ProccesNode(scene->mRootNode, scene);
@@ -118,7 +106,6 @@ namespace Bamtang
             {
                 delete m_animator;
                 m_animator = NULL;
-                //m_animator->boneID = glGetUniformLocation(shader.GetID(), "bones[0]");
             }
 
             glBindVertexArray(0);

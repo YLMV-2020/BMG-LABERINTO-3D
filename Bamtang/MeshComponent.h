@@ -2,7 +2,7 @@
 
 namespace Bamtang
 {
-    class MeshComponent : public IBaseComponent, public IMeshComponent
+    class MeshComponent : public IMeshComponent
     {
     private:
 
@@ -12,7 +12,7 @@ namespace Bamtang
 
         MeshComponent() {}
 
-        MeshComponent(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures, std::vector<VertexBoneData> bones = {}) : IBaseComponent()
+        MeshComponent(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures, std::vector<VertexBoneData> bones = {})
         {
             this->vertices = vertices;
             this->indices = indices;
@@ -24,21 +24,7 @@ namespace Bamtang
             Setup();
         }
 
-        void Debug()
-        {
-            std::cout << "Debug\n";
-        }
-
-        void Update(glm::mat4 transform) override
-        {
-            //this->transform = transform;
-        }
-
-        void Render(Camera& camera, Shader& shader) override
-        {
-        }
-
-        void Render(Shader& shader) override
+        void Draw(Shader& shader)
         {
 
             unsigned int diffuseNr = 1;
@@ -68,23 +54,6 @@ namespace Bamtang
             glBindVertexArray(0);
             glActiveTexture(GL_TEXTURE0);
 
-        }
-
-        bool SendMessage(IBaseMessage* msg) override
-        {
-
-            switch (msg->m_messageTypeID)
-            {
-            case Mesh_Static:
-            {
-
-            }
-            break;
-            default:
-                return IBaseComponent::SendMessage(msg);
-            }
-
-            return true;
         }
 
     private:

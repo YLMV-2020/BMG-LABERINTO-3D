@@ -12,7 +12,8 @@ namespace Bamtang
 
         glm::mat4 transform;
 
-        std::map<E_ComponentType, IBaseComponent*> m_components;
+        RenderComponent* m_render;
+        std::unordered_map<E_ComponentType, IBaseComponent*> m_components;
 
     public:
 
@@ -23,11 +24,10 @@ namespace Bamtang
             Rotation(rotation);
             Scale(scale);
 
-            auto render = new RenderComponent(path, gamma);
+            this->m_render = new RenderComponent(path, gamma);
+            this->m_render->Update(transform);
+            AddComponent(E_ComponentType::Render, this->m_render);
 
-            render->Update(transform);
-
-            AddComponent(E_ComponentType::Render, render);
             //AddComponent(new MeshComponent());
         }
 
@@ -57,17 +57,18 @@ namespace Bamtang
 
         void Update()
         {
-            std::map<E_ComponentType, IBaseComponent*>::iterator it = m_components.find(E_ComponentType::Render);
+            std::unordered_map<E_ComponentType, IBaseComponent*>::iterator it = m_components.find(E_ComponentType::Render);
 
             if (it != m_components.end())
             {
-                it->second->Update(transform);
+                RenderComponent* render = static_cast<RenderComponent*>(it->second);
+                render->Update(transform);
             }
         }
 
         void UpdateTime(float &currentFrame)
         {
-            std::map<E_ComponentType, IBaseComponent*>::iterator it = m_components.find(E_ComponentType::Render);
+            std::unordered_map<E_ComponentType, IBaseComponent*>::iterator it = m_components.find(E_ComponentType::Render);
 
             if (it != m_components.end())
             {
@@ -76,42 +77,10 @@ namespace Bamtang
             }
         }
 
-        void Draw(Shader& shader) 
-        {
-
-        }
-
         void Render(Camera& camera, Shader& shader) 
         {
-
-            //std::list<IBaseComponent*>::iterator compIt = components.begin();
-            //for (compIt; compIt != components.end(); ++compIt)
-            //{
-            //   /* MeshComponent* mesh = static_cast<MeshComponent*>(*compIt);
-            //    if (typeid(mesh) == typeid(MeshComponent*))
-            //    {
-
-            //        std::cout << "YES" << "\n";
-            //    }
-            //    else
-            //    {
-            //        std::cout << typeid(MeshComponent*).name() << "\n";
-
-            //    }
-            //    mesh->Debug();*/
-            //    (*compIt)->Render(camera, shader);
-            //}
-
-            std::map<E_ComponentType, IBaseComponent*>::iterator it = m_components.find(E_ComponentType::Render);
-
-            if (it != m_components.end())
-            {
-                it->second->Render(camera, shader);
-            }
-
+            m_render->Render(camera, shader);   
         }
-
-
 
     };
 

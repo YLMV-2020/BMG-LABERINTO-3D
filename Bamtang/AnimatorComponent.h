@@ -2,7 +2,7 @@ namespace Bamtang
 {
     class AnimatorComponent : public IBaseComponent
     {
-        public:
+    public:
 
         static const GLuint MAX_BONES = 100;
         static const GLuint MAX_ANIMATIONS = 10;
@@ -41,20 +41,6 @@ namespace Bamtang
 
         bool SendMessage(IBaseMessage* msg) override { return false; }
 
-        void Render(Shader& shader)override
-        {
-
-        }
-
-        void Render(Camera& camera, Shader& shader) override
-        {
-        }
-
-        void Update(glm::mat4 transform) override
-        {
-            //this->transform = transform;
-        }
-
         void Draw(Shader& shader)
         {
             std::vector<aiMatrix4x4> transforms;
@@ -70,7 +56,7 @@ namespace Bamtang
 
         void UpdateTime(float &currentFrame)
         {
- /*           if (!pause)*/
+            if (!pause)
                 animationTime = currentFrame - startFrame;
         }
 
