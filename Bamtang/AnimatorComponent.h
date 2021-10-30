@@ -10,7 +10,6 @@ namespace Bamtang
         const aiScene* scene[MAX_ANIMATIONS];
         Assimp::Importer import[MAX_ANIMATIONS];
 
-
         std::unordered_map<std::string, GLuint> mapBone;
         GLuint numBones = 0;
         std::vector<BoneMatrix> matrixBone;
@@ -41,7 +40,7 @@ namespace Bamtang
 
         bool SendMessage(IBaseMessage* msg) override { return false; }
 
-        void Draw(Shader& shader)
+        void BindBone(Shader& shader)
         {
             std::vector<aiMatrix4x4> transforms;
 
@@ -309,10 +308,6 @@ namespace Bamtang
 
             return result.Normalize();
         }
-
-    
-
-        
 
     };
 }

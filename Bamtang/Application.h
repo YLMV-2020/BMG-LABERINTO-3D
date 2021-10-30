@@ -90,7 +90,9 @@ namespace Bamtang
         Event_Application* event_app;
 
         Shader shaderObject;
+        Shader shaderObjectInstance;
         Shader shaderObjectDynamic;
+        Shader shaderObjectDynamicInstance;
         GameObject* object;
         GameObject* object2;
         //ObjectDynamic* dynamic2;
@@ -109,7 +111,7 @@ namespace Bamtang
             // --------- ENGINE ----------- //
             this->camera = Camera::Instance(WIDTH, HEIGHT);
             this->skybox = new Skybox("skyrender", "tga");
-            this->ground = new Ground("Grass001_2K-JPG\\Grass001_2K_Color.jpg", glm::vec3(100, -0.01f, 100), 50.0f);
+            this->ground = new Ground("marble.jpg", glm::vec3(200, -0.01f, 200), 50.0f);
             // --------- MANAGERS ----------- //
             this->inputManager = InputManager::Instance(window, camera);
             this->timeManager = TimeManager::Instance();
@@ -120,10 +122,19 @@ namespace Bamtang
             this->gui_app = new GUI_Application(window, version);
 
 
+
+
             this->shaderObject = Shader("assets/shaders/object.vert", "assets/shaders/object.frag");
+            this->shaderObjectInstance = Shader("assets/shaders/instanceModel.vert", "assets/shaders/instanceModel.frag");
             this->shaderObjectDynamic = Shader("assets/shaders/animation.vert", "assets/shaders/animation.frag");
-            this->object = new GameObject("assets/animations/character/character.dae", glm::vec3(20.0f, 1.0f, 20.0f));
-            this->object2 = new GameObject("assets/objects/plano/plano.obj", glm::vec3(20.1f, 1.0f, 100.0f));
+            this->shaderObjectDynamicInstance = Shader("assets/shaders/animation.vert", "assets/shaders/animation.frag");
+
+            Maze* maze = new Maze(51);
+            int nCount = maze->GetBlockCount();
+            glm::mat4 *matrix = maze->GetMatrix();
+
+            this->object = new GameObject("assets/animations/character/character.dae", glm::vec3(200.0f, 1.0f, 200.0f));
+            this->object2 = new GameObject("assets/objects/block/block.obj", glm::vec3(0.f, 1.0f, 0.0f), glm::vec3(1.0f), glm::vec3(0.0f), false, nCount, matrix);
             //this->dynamic =new ObjectDynamic("assets/animations/bruja/bruja.dae" , glm::vec3(1.0f, 1.0f, 0.0f));
             //this->dynamic->addAnimation("assets/animations/bruja/Samba Dancing.dae");
             //this->dynamic->currentAnimation = 1;
@@ -142,6 +153,13 @@ namespace Bamtang
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, version[0] - '0');
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, version[1] - '0');
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+            auto& monitor = *glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+            glfwWindowHint(GLFW_RED_BITS, monitor.redBits);
+            glfwWindowHint(GLFW_BLUE_BITS, monitor.blueBits);
+            glfwWindowHint(GLFW_GREEN_BITS, monitor.greenBits);
+            glfwWindowHint(GLFW_REFRESH_RATE, monitor.refreshRate);
 
             //glfwWindowHint(GLFW_RESIZABLE, false);
 
@@ -171,21 +189,14 @@ namespace Bamtang
 
         void Render()
         {
-
             skybox->Render(*camera, glm::vec3(1.0f));
             ground->Render(*camera, glm::vec3(1.0f));
 
-
-            object2->Render(*camera, shaderObject);
+            object2->RenderInstance(*camera, shaderObjectInstance);
 
             object->UpdateTime(timeManager->GetLastFrame());
 
-            //dynamic2->updateTime(timeManager->GetLastFrame());
-
             object->Render(*camera, shaderObjectDynamic);
-
-            //dynamic2->render(*camera, shaderObjectDynamic);
-
         }
 
         void Render3D()

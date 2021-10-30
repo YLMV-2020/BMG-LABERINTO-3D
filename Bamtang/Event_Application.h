@@ -16,6 +16,7 @@ namespace Bamtang
         std::function<void(double xpos, double ypos)> mousePosition;
         std::function<void(double xoffset, double yoffset)> offset;
         std::function<void(int button, int action, int mods)> mouseButton;
+        //std::function<void(GLFWwindow*)> mouseButton;
 
     public:
 

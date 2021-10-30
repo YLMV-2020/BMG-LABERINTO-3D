@@ -37,9 +37,6 @@
     <Filter Include="Archivos de encabezado\Engine\GameObject">
       <UniqueIdentifier>{1f3586bb-efdc-4d21-b841-01eba7f5a3da}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Archivos de encabezado\Engine\GameObject\Mesh">
-      <UniqueIdentifier>{055fa5bb-cf86-44f3-b47e-172b2ef34003}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Archivos de encabezado\Engine\GameObject\SharedTypes">
       <UniqueIdentifier>{1c76a9c8-fa63-4c73-8e76-0aee8ee960b3}</UniqueIdentifier>
     </Filter>

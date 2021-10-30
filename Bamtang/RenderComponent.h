@@ -14,14 +14,22 @@ namespace Bamtang
         bool gammaCorrection;
         bool hasBone = false;
 
+        int countInstance = 0;
+
         AnimatorComponent* m_animator = NULL;
 
     public:
 
-        RenderComponent(std::string const& path, bool gamma = false) : gammaCorrection(gamma)
+        RenderComponent(std::string const& path, bool gamma = false, int countInstance = 1, glm::mat4* matrix = NULL) : gammaCorrection(gamma)
         {
+            this->countInstance = countInstance;
+
             LoadModel(path);
 
+            if (countInstance > 1)
+            {
+                ConfigureInstance(matrix);
+            }
         }
 
         ~RenderComponent() {}
@@ -30,10 +38,18 @@ namespace Bamtang
 
         void Draw(Shader& shader) 
         {
-            if (hasBone) m_animator->Draw(shader);
+            if (hasBone) m_animator->BindBone(shader);
 
             for (unsigned int i = 0; i < meshes.size(); i++)
                 meshes[i]->Draw(shader);
+        }
+
+        void DrawInstance(Shader& shader)
+        {
+            if (hasBone) m_animator->BindBone(shader);
+
+            for (unsigned int i = 0; i < meshes.size(); i++)
+                meshes[i]->DrawInstance(shader, countInstance);
         }
 
         void Render(Camera& camera, Shader& shader) 
@@ -53,6 +69,19 @@ namespace Bamtang
 
         }
 
+        virtual void RenderInstance(Camera& camera, Shader& shader)
+        {
+            shader.Use();
+
+            glm::mat4 projection = camera.GetProjectionMatrix();
+            glm::mat4 view = camera.GetViewMatrix();
+
+            shader.SetMat4("projection", projection);
+            shader.SetMat4("view", view);
+
+            DrawInstance(shader);
+        }
+
         void Update(glm::mat4 transform) 
         {
             this->transform = transform;
@@ -69,6 +98,19 @@ namespace Bamtang
         }
 
     private:
+
+        void ConfigureInstance(glm::mat4 matriz[])
+        {
+            unsigned int buffer;
+            glGenBuffers(1, &buffer);
+            glBindBuffer(GL_ARRAY_BUFFER, buffer);
+            glBufferData(GL_ARRAY_BUFFER, countInstance * sizeof(glm::mat4), &matriz[0], GL_STATIC_DRAW);
+
+            for (unsigned int i = 0; i < meshes.size(); i++)
+            {
+                meshes[i]->ConfigureInstance();
+            }
+        }
         
         void LoadModel(std::string const& path)
         {
@@ -247,7 +289,6 @@ namespace Bamtang
                 if (!skip)
                 {   
                     Texture texture;
-                    std::cout << typeName << "\n";
                     texture.ID = ResourceManager::Instance()->LoadTexture(typeName, str.C_Str(), this->directory);
                     texture.type = typeName;
                     texture.path = str.C_Str();

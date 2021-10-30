@@ -23,6 +23,8 @@ namespace Bamtang
 
         std::vector<IGraphicalUserInterface*> gui;
 
+        ImGuiWindowFlags window_flags;
+
     public:
 
         GUI_Application(GLFWwindow* window, std::string version)
@@ -79,6 +81,9 @@ namespace Bamtang
 
             ImGui::StyleColorsDark();
 
+            window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
+                ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
+
             ImGuiStyle& style = ImGui::GetStyle();
             if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
             {
@@ -86,7 +91,6 @@ namespace Bamtang
                 style.Colors[ImGuiCol_WindowBg].w = 1.0f;
             }
 
-            ImGuiWindowFlags window_flags = 0;
             ImGui_ImplGlfw_InitForOpenGL(window, true);
             ImGui_ImplOpenGL3_Init(glsl_version.c_str());
 
@@ -129,69 +133,53 @@ namespace Bamtang
 
         void DockSpace()
         {
-            static bool opt_fullscreen = true;
-            static bool opt_padding = false;
-            static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+            ImGuiViewport* viewport = ImGui::GetMainViewport();
+            ImGui::SetNextWindowPos(viewport->Pos);
+            ImGui::SetNextWindowSize(viewport->Size);
+            ImGui::SetNextWindowViewport(viewport->ID);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
-            ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-            if (opt_fullscreen)
+            ImGui::Begin("Dockspace", nullptr, window_flags);
             {
-                ImGuiViewport* viewport = ImGui::GetMainViewport();
-                ImGui::SetNextWindowPos(viewport->GetWorkPos());
-                ImGui::SetNextWindowSize(viewport->GetWorkSize());
-                ImGui::SetNextWindowViewport(viewport->ID);
-                ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-                ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-                window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-                window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-            }
-            else
-            {
-                dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
+                ImGuiID dockID = ImGui::GetID("Dockspace");
+                ImGui::DockSpace(dockID, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
             }
 
-            if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
-                window_flags |= ImGuiWindowFlags_NoBackground;
-
-            if (!opt_padding)
-                ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-            ImGui::Begin("DockSpace Demo", NULL, window_flags);
-            if (!opt_padding)
-                ImGui::PopStyleVar();
-
-            if (opt_fullscreen)
-                ImGui::PopStyleVar(2);
-
-            // DockSpace
-            ImGuiIO& io = ImGui::GetIO();
-            if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
-            {
-                ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-                ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-            }
-            else
-            {
-                ImGuiIO& io = ImGui::GetIO();
-                ImGui::Text("ERROR: Docking is not enabled! See Demo > Configuration.");
-                ImGui::Text("Set io.ConfigFlags |= ImGuiConfigFlags_DockingEnable in your code, or ");
-                ImGui::SameLine(0.0f, 0.0f);
-                if (ImGui::SmallButton("click here"))
-                    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-            }
-
-            if (ImGui::BeginMenuBar())
-            {
-                if (ImGui::BeginMenu("Options"))
-                {
-                    //ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
-                    ImGui::MenuItem("Padding", NULL, &opt_padding);
-                    //ImGui::Separator();
+            if (ImGui::BeginMenuBar()) {
+                if (ImGui::BeginMenu("File")) {
+                    if (ImGui::MenuItem("\xef\x85\x9c", "Open Project", "Ctrl + O")) {}
+                    if (ImGui::MenuItem("New", "Ctrl+N")) {}
+                    if (ImGui::MenuItem("Open", "Ctrl+O")) {}
+                    if (ImGui::MenuItem("Save", "Ctrl+S")) {}
+                    if (ImGui::MenuItem("Save As..")) {}
+                    ImGui::EndMenu();
+                }
+                if (ImGui::BeginMenu("Editor")) {
+                    if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
+                    if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
+                    ImGui::Separator();
+                    if (ImGui::MenuItem("Cut", "CTRL+X")) {}
+                    if (ImGui::MenuItem("Copy", "CTRL+C")) {}
+                    if (ImGui::MenuItem("Paste", "CTRL+V")) {}
+                    ImGui::EndMenu();
+                }
+                if (ImGui::BeginMenu("Settings")) {
+                    if (ImGui::MenuItem("Customize", "Ctrl+T")) {}
+                    ImGui::EndMenu();
+                }
+                if (ImGui::BeginMenu("Help")) {
+                    if (ImGui::MenuItem("View Help", "Ctrl+H")) {}
+                    if (ImGui::MenuItem("About Soft3D")) {}
                     ImGui::EndMenu();
                 }
 
                 ImGui::EndMenuBar();
             }
+
             ImGui::End();
+            ImGui::PopStyleVar(3);
         }
     };
 

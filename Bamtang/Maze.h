@@ -10,16 +10,28 @@ namespace Bamtang
 
 	private:
 
-		char* board;
 		unsigned int n;
+		char* board;
+
+		unsigned int nBlocks;
+		glm::mat4* matrix;
 
 	public:
 
 		Maze(const unsigned int& n)
 		{
 			srand((unsigned)time(NULL));
-
 			CreateMaze2D(n);
+		}
+
+		glm::mat4* GetMatrix()
+		{
+			return matrix;
+		}
+
+		int GetBlockCount()
+		{
+			return nBlocks;
 		}
 
 	private:
@@ -63,6 +75,19 @@ namespace Bamtang
 			}
 		}
 
+		int CountBlocks()
+		{
+			int count = 0;
+			for (int y = 0; y < n; ++y)
+			{
+				for (int x = 0; x < n; ++x)
+				{
+					if (board[Index(x, y)] == '*') count++;
+				}
+			}
+			return count;
+		}
+
 		void GenerateMaze(int x, int y)
 		{
 			board[Index(x, y)] = ' ';
@@ -99,6 +124,27 @@ namespace Bamtang
 				{
 					board[Index(x2 - dx, y2 - dy)] = ' ';
 					GenerateMaze(x2, y2);
+				}
+			}
+		}
+
+		void GenerateMatrix()
+		{
+			int i = 0;
+			for (int y = 0; y < n; ++y)
+			{
+				for (int x = 0; x < n; ++x)
+				{
+					if (board[Index(x, y)] == '*')
+					{
+						glm::mat4 model = glm::mat4(1.0f);
+						model = glm::translate(model, glm::vec3(x * 2.1f, 1.0f, y * 2.1f));
+						model = glm::scale(model, glm::vec3(1.0f));
+						model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+						model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+						model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+						matrix[i++] = model;
+					}
 				}
 			}
 		}
@@ -152,7 +198,17 @@ namespace Bamtang
 			GenerateMaze(1, 1);
 			FindPathBFS();
 			Draw();
+
+			this->nBlocks = CountBlocks();
+
+			delete matrix;
+			matrix = NULL;
+			matrix = new glm::mat4[nBlocks];
+
+			GenerateMatrix();
+
 		}
+
 	};
 
 }
