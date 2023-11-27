@@ -26,7 +26,7 @@ namespace Maze3D
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
             //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-            window = glfwCreateWindow(WIDTH, HEIGHT, "Laberinto 3D", NULL, NULL);
+            window = glfwCreateWindow(WIDTH, HEIGHT, "Maze 3D", NULL, NULL);
             if (!window) return;
 
             //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -558,7 +558,8 @@ namespace Maze3D
 
                     ImGui::Separator();
                 }
-                if (ImGui::ImageButton((void*)texturesImGui[1], ImVec2(50, 50)))
+
+                if (ImGui::ImageButton((void*)texturesImGui[0], ImVec2(50, 50)))
                 {
                     luz->addSol(camera->Position + camera->Front, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(3.50f, 3.50f, 3.50f));
                 }
